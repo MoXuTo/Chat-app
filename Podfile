@@ -11,6 +11,10 @@ target 'Messenger' do
   pod 'Firebase/Database'
   # Pods for Messenger
 
+# Google Sign in
+pod 'GoogleSignIn'
+	
+
 end
 
 
