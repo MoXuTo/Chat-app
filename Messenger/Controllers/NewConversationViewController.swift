@@ -21,7 +21,7 @@ class NewConversationViewController: UIViewController {
     private let tableView: UITableView = {
            let table = UITableView()
            table.isHidden = true
-           table.register(NewConversationCell.self,
+           table.register(UITableViewCell.self,
                           forCellReuseIdentifier: "cell")
            return table
        }()
@@ -56,16 +56,7 @@ class NewConversationViewController: UIViewController {
 
 extension NewConversationViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let text = searchBar.text, !text.replacingOccurrences(of: " ", with: "").isEmpty else {
-            return
-        }
-
-        searchBar.resignFirstResponder()
-
-        results.removeAll()
-        spinner.show(in: view)
-
-        searchUsers(query: text)
+        
     }
 
 }

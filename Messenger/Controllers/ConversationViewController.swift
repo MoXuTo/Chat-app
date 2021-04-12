@@ -10,14 +10,14 @@ import FirebaseAuth
 import JGProgressHUD
 
 
-class ConversationViewController: UIViewController {
+class ConversationsViewController: UIViewController {
 
     private let spinner = JGProgressHUD(style: .dark)
 
     private let tableView: UITableView = {
         let table = UITableView()
         table.isHidden = true
-        table.register(ConversationTableViewCell.self,
+        table.register(UITableViewCell.self,
                        forCellReuseIdentifier: "cell")
         return table
     }()
@@ -85,7 +85,7 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
         return 1
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath){
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
       let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
       cell.textLabel?.text = "Hello World"
       cell.accessoryType = .disclosureIndicator
