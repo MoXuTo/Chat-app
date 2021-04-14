@@ -1,10 +1,3 @@
-//
-//  ChatViewController.swift
-//  Messenger
-//
-//  Created by Панкратьева Ольга on 12.04.2021.
-//
-
 import UIKit
 import MessageKit
 
