@@ -13,12 +13,12 @@ import GoogleSignIn
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+
         FirebaseApp.configure()
-        
+
         GIDSignIn.sharedInstance()?.clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance()?.delegate = self
-        
+
         return true
     }
 
@@ -41,10 +41,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey : Any] = [:]
     ) -> Bool {
-        
+
         return GIDSignIn.sharedInstance().handle(url)
     }
-    
+
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         guard error == nil else {
             if let error = error {
@@ -52,40 +52,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             }
             return
         }
-        
+
         guard let user = user else {
             return
         }
-        
+
         print("Did sign in with Google: \(user)")
-        
+
         guard let email = user.profile.email,
               let firstName = user.profile.givenName,
               let lastName = user.profile.familyName else {
                 return
         }
-        
+
+        UserDefaults.standard.set(email, forKey: "email")
+
         DatabaseManager.shared.userExists(with: email, completion: { exists in
             if !exists {
                 // insert to database
                 let chatUser = ChatAppUser(firstName: firstName,
                                            lastName: lastName,
                                            emailAddres: email )
-                
+
                 DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
                     if success{
-                        
+
                         // upload image
                         if user.profile.hasImage{
                             guard  let url = user.profile.imageURL(withDimension: 200) else{
                                 return
                             }
-                            
+
                             URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
                                 guard let data = data else {
                                     return
                                 }
-                                
+
                                 let fileName = chatUser.profilePictureFileName
                                 StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName, completion: { result in
                                     switch result{
@@ -102,12 +104,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 })
             }
         })
-        
+
         guard let authentication  = user.authentication else {
             print("Missing auth object off of google user")
             return
         }
-        
+
         let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
                                                        accessToken: authentication.accessToken)
         FirebaseAuth.Auth.auth().signIn(with: credential, completion: { authResult, error in
@@ -115,14 +117,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 print("failed to log in with google credential")
                 return
             }
-            
+
             print("Successfully signed in with Google credential")
             NotificationCenter.default.post(name: .didLogInNotification, object: nil)
         })
     }
-    
+
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
         print("Google user was disconnected")
     }
 }
-
