@@ -1,2 +1,13 @@
 *.DS_Store
 ._*
+
+*/build/*
+xcuserdata
+
+*.hmap
+*.xccheckout
+*.xcworkspace
+!Messenger.xcworkspace
+
+#CocoaPods
+Pods
